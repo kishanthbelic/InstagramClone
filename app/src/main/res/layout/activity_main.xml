@@ -18,46 +18,54 @@
          />
 
 
+    <EditText
+        android:id="@+id/username_id"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="201dp"
+        android:ems="10"
+        android:hint="Enter Username"
+        android:inputType="textPersonName"
+        android:textColor="#cccccc"
+        android:textColorHint="#cccccc" />
 
-        <EditText
-            android:id="@+id/username_id"
-            android:layout_width="340dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="214dp"
-            android:ems="10"
-            android:hint="Enter Username"
-            android:inputType="textPersonName"
-            android:textColor="#cccccc"
-            android:textColorHint="#cccccc"
-            />
-
-        <EditText
-            android:id="@+id/pass_id"
-            android:layout_width="340dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="188dp"
-            android:ems="10"
-            android:hint="Enter Password"
-            android:inputType="textPassword"
-            android:textColorHint="#cccccc"
-            android:textColor="#cccccc"
-            />
+    <EditText
+        android:id="@+id/pass_id"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username_id"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="Enter Password"
+        android:inputType="textPassword"
+        android:textColor="#cccccc"
+        android:textColorHint="#cccccc" />
 
 
     <Button
         android:id="@+id/login_id"
-        android:layout_width="283dp"
-        android:layout_height="wrap_content"
+        android:layout_width="157dp"
+        android:layout_height="38dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="114dp"
+        android:layout_marginBottom="145dp"
         android:background="@android:color/holo_purple"
         android:onClick="signInClicked"
-        android:text="Signin"
-        android:textColor="#cccccc" />
+        android:text="Sign In"
+        android:textColor="#cccccc"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/changeModeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/login_id"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="38dp"
+        android:text="or Signup"
+        android:textColor="#cccccc"
+        android:textSize="16sp" />
 
 </RelativeLayout>
