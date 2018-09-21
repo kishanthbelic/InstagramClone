@@ -1,6 +1,7 @@
 package com.example.kishbelic.instagramclone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,20 +51,16 @@ public class MainActivity extends AppCompatActivity {
 
         //firebase
         FireAuth = FirebaseAuth.getInstance();
-        FireUser = FireAuth.getCurrentUser();
+        //FireUser = FireAuth.getCurrentUser();
 
-
-        //temporary
-        if (FireUser!=null){
-            FireAuth.signOut();
-        }
+        FireAuth.signOut();
 
         //changemodeText function
          changeModeText= (TextView)findViewById(R.id.changeModeText);
         changeMode(changeModeText);
 
 
-
+        //createDb();
 
 
 
@@ -128,12 +133,14 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful())
                 {
 
-                    Toast.makeText(MainActivity.this, "Account Created Successfully", Toast.LENGTH_SHORT).show();
-                        Log.i("tagFire","success man");
+                    Toast.makeText(MainActivity.this, "Bro , Your Account Created Successfully", Toast.LENGTH_LONG).show();
+                    Log.i("tagFire","success man");
+
 
                 }
                 else
                 {
+                    Toast.makeText(MainActivity.this, "Failed to create account Sorry bro", Toast.LENGTH_SHORT).show();
                     Log.i("tagFire","failed  man");
                 }
 
@@ -160,7 +167,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                             Log.i("tagFire", "User " + FireUser.getEmail() + "Logged in successfully");
-                            Toast.makeText(MainActivity.this, "User " + FireUser.getEmail() + "Logged in successfully", Toast.LENGTH_SHORT).show();
+                            GoToHomeActivity();
+                            Toast.makeText(getApplicationContext(), "User " + FireUser.getEmail() + "Logged in successfully", Toast.LENGTH_LONG).show();
+
 
                             if (FireUser.isEmailVerified()) {
                                 Log.i("tagFire", "Email verified");
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
                         } else {
 
-                            Toast.makeText(MainActivity.this, "Login failed check your username and password", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Login failed check your username and password", Toast.LENGTH_LONG).show();
                             Log.i("tagFire", "Login failed check your username and password");
                         }
 
@@ -176,9 +185,42 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } else {
+                FirebaseAuth.getInstance().signOut();
                 Log.i("tagFire", "User " + FireUser.getEmail() + " Logged in already");
             }
         }
 
     }
+
+
+    public void createDb(){
+        try {
+
+            FirebaseDatabase FireDB = FirebaseDatabase.getInstance();
+            DatabaseReference myref = FireDB.getReference("users");
+
+            FireUser = FireAuth.getCurrentUser();
+
+            Map<String,user> userHash = new HashMap<>();
+
+            userHash.put(FireUser.getUid(),new user(FireUser.getUid(),FireUser.getEmail()));
+
+
+
+
+            }catch (Exception e){
+
+            e.printStackTrace();
+            Log.i("tagFire","aahan");
+        }
+
+    }
+
+public void GoToHomeActivity(){
+    Intent intent = new Intent(getApplicationContext(),HomePage.class);
+
+    startActivity(intent);
+
+}
+
 }
