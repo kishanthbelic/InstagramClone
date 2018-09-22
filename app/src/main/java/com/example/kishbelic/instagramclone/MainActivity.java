@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth FireAuth;
     private FirebaseUser FireUser;
+
+    private DatabaseReference UserRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +56,21 @@ public class MainActivity extends AppCompatActivity {
         FireAuth = FirebaseAuth.getInstance();
         //FireUser = FireAuth.getCurrentUser();
 
-        FireAuth.signOut();
-
         //changemodeText function
          changeModeText= (TextView)findViewById(R.id.changeModeText);
         changeMode(changeModeText);
 
+        FireUser = FireAuth.getCurrentUser();
 
-        //createDb();
+        if (FireUser!=null){
+            GoToHomeActivity();
+        }
 
 
-
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
     }
+
 
 
     public void changeMode(View view) {
@@ -133,15 +138,15 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful())
                 {
 
-                    Toast.makeText(MainActivity.this, "Bro , Your Account Created Successfully", Toast.LENGTH_LONG).show();
-                    Log.i("tagFire","success man");
+                    createUserInformation();
 
-
+                    FireUser = null;
+                    FirebaseAuth.getInstance().signOut();
                 }
                 else
                 {
                     Toast.makeText(MainActivity.this, "Failed to create account Sorry bro", Toast.LENGTH_SHORT).show();
-                    Log.i("tagFire","failed  man");
+                    Log.i("tagFire","Failed to create account Sorry bro");
                 }
 
             }
@@ -156,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i("tagFire","Sign In clicked");
 
+            FireUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
             if (FireUser == null) {
                 FireAuth.signInWithEmailAndPassword(username_id.getText().toString(), pass_id.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -166,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                             FireUser = FireAuth.getCurrentUser();
 
 
-                            Log.i("tagFire", "User " + FireUser.getEmail() + "Logged in successfully");
+                            Log.i("tagFire", "User " + FireUser.getEmail() + " has Logged in successfully");
                             GoToHomeActivity();
                             Toast.makeText(getApplicationContext(), "User " + FireUser.getEmail() + "Logged in successfully", Toast.LENGTH_LONG).show();
 
@@ -185,7 +193,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                FirebaseAuth.getInstance().signOut();
+                
+                GoToHomeActivity();
                 Log.i("tagFire", "User " + FireUser.getEmail() + " Logged in already");
             }
         }
@@ -193,26 +202,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void createDb(){
-        try {
-
-            FirebaseDatabase FireDB = FirebaseDatabase.getInstance();
-            DatabaseReference myref = FireDB.getReference("users");
+    public void createUserInformation(){
 
             FireUser = FireAuth.getCurrentUser();
+            HashMap UserMap = new HashMap<>();
 
-            Map<String,user> userHash = new HashMap<>();
-
-            userHash.put(FireUser.getUid(),new user(FireUser.getUid(),FireUser.getEmail()));
-
+            UserMap.put("mail",FireUser.getEmail());
 
 
+            UserRef.child(FireUser.getUid()).updateChildren(UserMap).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
 
-            }catch (Exception e){
+                    if (task.isSuccessful())
+                    {
 
-            e.printStackTrace();
-            Log.i("tagFire","aahan");
-        }
+                        Toast.makeText(MainActivity.this, "Bro , Your Account Created Successfully", Toast.LENGTH_LONG).show();
+                        Log.i("tagFire","Bro , Your Account Created Successfully");
+
+
+                    }
+                    else
+                    {
+                        Toast.makeText(MainActivity.this, "Failed to create account Sorry bro", Toast.LENGTH_SHORT).show();
+                        Log.i("tagFire","Failed to create account Sorry bro");
+                    }
+
+                }
+
+            });
+
 
     }
 
