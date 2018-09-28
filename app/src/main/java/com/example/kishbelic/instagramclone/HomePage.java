@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
@@ -50,9 +52,10 @@ public class HomePage extends AppCompatActivity {
     private FirebaseAuth FireAuth;
     private FirebaseUser FireUser;
 
-    private DatabaseReference UsersRef;
+    private DatabaseReference UsersRef,userImageRef;
     private StorageReference storeRef;
     private StorageReference ImageRef;
+
 
 
 
@@ -78,18 +81,33 @@ public class HomePage extends AppCompatActivity {
 
         listView = (ListView)findViewById(R.id.listView);
         UsersList = new ArrayList();
-        //UsersList.add("summa");
-        //UsersList.clear();
+
+
 
         arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,UsersList);
 
         listView.setAdapter(arrayAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                Intent intent = new Intent(getApplicationContext(),PostActivity.class);
+
+                intent.putExtra("userMail",listView.getItemAtPosition(i).toString());
+
+                startActivity(intent);
+
+
+            }
+        });
 
 
         UsersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UsersList.clear();
 
                 if(dataSnapshot.exists()){
 
@@ -153,7 +171,7 @@ public class HomePage extends AppCompatActivity {
 
             Intent intent= new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent,2);
-            Log.i("tagFire","done");
+            
             return true;
         }
 
@@ -163,7 +181,11 @@ public class HomePage extends AppCompatActivity {
 public void saveImage(Uri selectedImage){
 
         FireUser =FireAuth.getCurrentUser();
-        ImageRef = storeRef.child("images/"+ FireUser.getUid()+"/"+UUID.randomUUID().toString());
+
+        final String randomName = UUID.randomUUID().toString();
+        ImageRef = storeRef.child("images/"+ FireUser.getUid()+"/"+randomName);
+
+        userImageRef = UsersRef.child(FireUser.getUid()).child("images");
 
 
     final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -174,7 +196,7 @@ public void saveImage(Uri selectedImage){
         ImageRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
+                userImageRef.child(randomName).setValue("image");
                 Log.i("tagfire","upload Success ");
                 progressDialog.dismiss();
             }
@@ -203,7 +225,6 @@ public void saveImage(Uri selectedImage){
         if (requestCode==2 && resultCode==RESULT_OK && data!=null){
 
             Uri selectedImage = data.getData();
-            Log.i("tagFire","done"+selectedImage);
             saveImage(selectedImage);
 
         }
