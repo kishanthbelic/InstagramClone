@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                
+
                 GoToHomeActivity();
                 Log.i("tagFire", "User " + FireUser.getEmail() + " Logged in already");
             }
